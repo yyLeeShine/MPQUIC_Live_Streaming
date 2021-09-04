@@ -21,7 +21,7 @@ import (
 //The reciever function that recieves the frames from the sender
 //input args - the directory to store the frames. Run the viewer function to show the video
 
-const quicServerAddr = "1.116.187.145:5252"
+const quicServerAddr = "127.0.0.1:5252"
 
 var elapsed time.Duration
 
@@ -35,9 +35,10 @@ func HandleError(err error) {
 
 func main() {
 
-	videoDir := "../img_save"
+	videoDir := "/Users/liyahui/go/src/MPQUIC_Live_Streaming/img_save"
 	fmt.Println("Saving Video in: ", videoDir)
-
+	window := gocv.NewWindow("Capture Window")
+	defer window.Close()
 	quicConfig := &quic.Config{
 		CreatePaths: true,
 	}
@@ -55,13 +56,13 @@ func main() {
 
 	stream, err := sess.AcceptStream()
 	HandleError(err)
-
 	defer stream.Close()
 
 	fmt.Println("stream created: ", stream.StreamID())
 
 	frame_counter := 0
 	t1 := time.Now()
+
 	for {
 		if frame_counter%100 == 0 {
 			t1 = time.Now()
@@ -106,6 +107,10 @@ func main() {
 		fmt.Println(frame_counter)
 
 		gocv.IMWrite(videoDir+"/img"+strconv.Itoa(frame_counter)+".jpg", img)
+		window.IMShow(img)
+		if window.WaitKey(1) == 27 {
+			break
+		}
 		frame_counter += 1
 		if frame_counter%100 == 0 {
 			elapsed = time.Since(t1)

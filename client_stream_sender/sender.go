@@ -48,11 +48,12 @@ func main() {
 	//}
 
 	// parse args
-	deviceID := 0                          //os.Args[1]// device id for the webcam, 0 be default
-	quicServerAddr := "1.116.187.145:4242" //os.Args[2]// the server address, in this case 0.0.0.0:4242
+	deviceID := 0                      //os.Args[1]// device id for the webcam, 0 be default
+	quicServerAddr := "127.0.0.1:4242" //os.Args[2]// the server address, in this case 0.0.0.0:4242
 
 	//open webcam
 	webcam, err = gocv.OpenVideoCapture(deviceID)
+
 	if err != nil {
 		fmt.Printf("Error opening capture device: %v\n", deviceID)
 		return

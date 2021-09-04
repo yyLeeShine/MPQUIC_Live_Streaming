@@ -17,8 +17,8 @@ import (
 //The reciever function that recieves the frames from the sender
 //input args - the directory to store the frames. Run the viewer function to show the video
 
-const quicServerAddr = "0.0.0.0:4242"
-const quicServerAddr2 = "0.0.0.0:5252"
+const quicServerAddr = "127.0.0.1:4242"
+const quicServerAddr2 = "127.0.0.1:5252"
 
 func HandleError(err error) {
 	if err != nil {
