@@ -13,15 +13,15 @@ import (
 	"io"
 	"log"
 	"math/big"
+	random "math/rand"
 	"os"
-	"strconv"
 	"time"
 )
 
 //The reciever function that recieves the frames from the sender
 //input args - the directory to store the frames. Run the viewer function to show the video
 
-const quicServerAddr = "127.0.0.1:5252"
+const quicServerAddr = "1.116.187.145:5252"
 
 var elapsed time.Duration
 
@@ -35,8 +35,6 @@ func HandleError(err error) {
 
 func main() {
 
-	videoDir := "/Users/liyahui/go/src/MPQUIC_Live_Streaming/img_save"
-	fmt.Println("Saving Video in: ", videoDir)
 	window := gocv.NewWindow("Capture Window")
 	defer window.Close()
 	quicConfig := &quic.Config{
@@ -49,7 +47,9 @@ func main() {
 	defer f.Close()
 	log.SetOutput(f)
 	log.SetFlags(log.Ltime | log.Lshortfile)
-	log.Println()
+
+	log.Println() //4G + 4G or 4G or 4G + wifi or wifi?
+
 	// initializing mpquic server
 	sess, err := quic.DialAddr(quicServerAddr, &tls.Config{InsecureSkipVerify: true}, quicConfig)
 	HandleError(err)
@@ -67,7 +67,7 @@ func main() {
 		if frame_counter%100 == 0 {
 			t1 = time.Now()
 		}
-		siz := make([]byte, 60) // size is needed to make use of ReadFull(). ReadAll() needs EOF to stop accepting while ReadFull just needs the fixed size.
+		siz := make([]byte, 8) // size is needed to make use of ReadFull(). ReadAll() needs EOF to stop accepting while ReadFull just needs the fixed size.
 
 		_, err := io.ReadFull(stream, siz)      //recieve the size
 		data := binary.LittleEndian.Uint64(siz) //if the first few bytes contain the length; else use BigEndian or reverse the byte[] and use LittleEndian
@@ -89,8 +89,13 @@ func main() {
 			return
 		}
 
-		img, err := gocv.IMDecode(buff, 1) //IMReadFlag 1 ensure that image is converted to 3 channel RGB
-
+		//calculate the time of this image from the webcam to this client
+		imgbuff := buff[0 : len2-8]
+		timeStamp := buff[len2-8 : len2]
+		clientTime := binary.LittleEndian.Uint64(timeStamp)
+		//fmt.Println(clientTime)
+		//fmt.Println(" the time :",uint64(time.Now().UnixMilli())-clientTime)//the time consumed
+		img, err := gocv.IMDecode(imgbuff, 1) //IMReadFlag 1 ensure that image is converted to 3 channel RGB
 		HandleError(err)
 		// if decoding fails
 
@@ -98,15 +103,20 @@ func main() {
 			defer stream.Close()
 			return
 		}
+		random.Seed(time.Now().UnixNano())
+		num := random.Intn(10)
+		if num == 10 {
+			log.Println("time consumed :", uint64(time.Now().UnixMilli())-clientTime)
+		}
 
 		//everything good !!
 		//save image and call viewer.py which shows the stream
 
-		file, err := os.Create(videoDir + "/img" + strconv.Itoa(frame_counter) + ".jpg")
+		/*file, err := os.Create(videoDir + "/img" + strconv.Itoa(frame_counter) + ".jpg")
 		HandleError(err)
 		fmt.Println(frame_counter)
 
-		gocv.IMWrite(videoDir+"/img"+strconv.Itoa(frame_counter)+".jpg", img)
+		gocv.IMWrite(videoDir+"/img"+strconv.Itoa(frame_counter)+".jpg", img)*/
 		window.IMShow(img)
 		if window.WaitKey(1) == 27 {
 			break
@@ -114,11 +124,11 @@ func main() {
 		frame_counter += 1
 		if frame_counter%100 == 0 {
 			elapsed = time.Since(t1)
-			log.Println(100 / (int(elapsed / time.Second)))
+			//log.Println("FPS:",100 / (int(elapsed / time.Second)))
 		}
-		fmt.Println(videoDir + "/img" + strconv.Itoa(frame_counter) + ".jpg")
+		/*fmt.Println(videoDir + "/img" + strconv.Itoa(frame_counter) + ".jpg")
 
-		file.Close()
+		file.Close()*/
 	}
 
 }
