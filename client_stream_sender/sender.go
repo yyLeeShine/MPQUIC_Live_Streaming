@@ -35,7 +35,7 @@ var (
 
 func main() {
 
-	f, err := os.OpenFile("clientlog.txt", os.O_CREATE|os.O_RDWR|os.O_APPEND, 0666)
+	f, err := os.OpenFile("client_stream_sender/clientlog.txt", os.O_CREATE|os.O_RDWR|os.O_APPEND, 0666)
 	defer f.Close()
 	if err != nil {
 		panic(err)

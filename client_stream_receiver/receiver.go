@@ -40,7 +40,7 @@ func main() {
 	quicConfig := &quic.Config{
 		CreatePaths: true,
 	}
-	f, err := os.OpenFile("./clientlog.txt", os.O_CREATE|os.O_RDWR|os.O_APPEND, 0666)
+	f, err := os.OpenFile("client_stream_receiver/clientlog.txtt", os.O_CREATE|os.O_RDWR|os.O_APPEND, 0666)
 	if err != nil {
 		panic(err)
 	}
