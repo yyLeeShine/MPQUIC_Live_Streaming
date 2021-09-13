@@ -105,7 +105,7 @@ func main() {
 		}
 		random.Seed(time.Now().UnixNano())
 		num := random.Intn(10)
-		if num == 10 {
+		if num == 5 {
 			log.Println("time consumed :", uint64(time.Now().UnixMilli())-clientTime)
 		}
 

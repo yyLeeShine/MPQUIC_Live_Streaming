@@ -1,2 +1,65 @@
 15:54:00 sender.go:44: 
 15:56:42 receiver.go:52: 
+10:32:45 receiver.go:51: 
+10:33:29 receiver.go:51: 
+10:33:29 receiver.go:109: time consumed : 426
+10:33:30 receiver.go:109: time consumed : 460
+10:33:31 receiver.go:109: time consumed : 471
+10:33:32 receiver.go:109: time consumed : 1041
+10:33:33 receiver.go:109: time consumed : 708
+10:33:35 receiver.go:109: time consumed : 684
+10:33:40 receiver.go:109: time consumed : 881
+10:33:40 receiver.go:109: time consumed : 900
+10:33:40 receiver.go:109: time consumed : 843
+10:33:40 receiver.go:109: time consumed : 859
+10:33:42 receiver.go:109: time consumed : 731
+10:33:44 receiver.go:109: time consumed : 519
+10:33:44 receiver.go:109: time consumed : 554
+10:33:45 receiver.go:109: time consumed : 594
+10:33:49 receiver.go:109: time consumed : 1624
+10:33:51 receiver.go:109: time consumed : 923
+10:33:53 receiver.go:109: time consumed : 392
+10:33:55 receiver.go:109: time consumed : 1014
+10:33:57 receiver.go:109: time consumed : 1666
+10:33:57 receiver.go:109: time consumed : 1237
+10:33:58 receiver.go:109: time consumed : 1664
+10:33:59 receiver.go:109: time consumed : 1132
+10:34:00 receiver.go:109: time consumed : 1205
+10:34:03 receiver.go:109: time consumed : 2245
+10:34:07 receiver.go:109: time consumed : 2015
+10:34:09 receiver.go:109: time consumed : 2113
+10:34:10 receiver.go:109: time consumed : 1766
+10:34:10 receiver.go:109: time consumed : 1811
+10:34:11 receiver.go:109: time consumed : 823
+10:34:11 receiver.go:109: time consumed : 611
+10:34:12 receiver.go:109: time consumed : 1154
+10:34:13 receiver.go:109: time consumed : 2047
+10:34:16 receiver.go:109: time consumed : 1034
+10:34:16 receiver.go:109: time consumed : 1084
+10:34:18 receiver.go:109: time consumed : 1366
+10:34:21 receiver.go:109: time consumed : 943
+10:34:23 receiver.go:109: time consumed : 1340
+10:34:24 receiver.go:109: time consumed : 2198
+10:34:26 receiver.go:109: time consumed : 2249
+10:34:27 receiver.go:109: time consumed : 1420
+10:34:28 receiver.go:109: time consumed : 1072
+10:34:34 receiver.go:109: time consumed : 4915
+10:34:37 receiver.go:109: time consumed : 3272
+10:34:37 receiver.go:109: time consumed : 3328
+10:34:38 receiver.go:109: time consumed : 3596
+10:34:43 receiver.go:109: time consumed : 5007
+10:34:51 receiver.go:109: time consumed : 8347
+10:34:53 receiver.go:109: time consumed : 10435
+10:34:54 receiver.go:109: time consumed : 10515
+10:34:57 receiver.go:109: time consumed : 12058
+10:34:58 receiver.go:109: time consumed : 12788
+10:35:06 receiver.go:109: time consumed : 14609
+10:35:11 receiver.go:109: time consumed : 14245
+10:35:11 receiver.go:109: time consumed : 13771
+10:35:11 receiver.go:109: time consumed : 12399
+10:35:12 receiver.go:109: time consumed : 12423
+10:35:13 receiver.go:109: time consumed : 12134
+10:35:16 receiver.go:109: time consumed : 13521
+10:35:17 receiver.go:109: time consumed : 5667
+16:37:58 receiver.go:51: 
+16:39:39 receiver.go:51: 

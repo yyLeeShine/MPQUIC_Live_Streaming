@@ -88,7 +88,7 @@ func main() {
 
 	for {
 
-		if image_count%100 == 0 { //fps is calculated if 100 image is transmitted
+		if image_count%20 == 0 { //fps is calculated if 100 image is transmitted
 			t = time.Now()
 			size = 0
 		}
@@ -130,10 +130,10 @@ func main() {
 		t4 := time.Now()
 		stream.Write(buf2) //sends the frame
 		t2 += time.Since(t4)
-		if image_count%100 == 0 {
+		if image_count%20 == 0 {
 			elapsed := time.Since(t)
 			duration := int(elapsed / time.Second)
-			log.Println("FPS:", 100/(duration))
+			log.Println("FPS:", 20/(duration))
 			log.Println("throughput(MB):", float64(size)/(1024.0*1024.0*float64(duration)))
 			log.Println("gocv time :", t1, "transfer time :", t2, "total time:", elapsed)
 			t1, t2 = 0, 0
