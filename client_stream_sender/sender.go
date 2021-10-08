@@ -49,8 +49,8 @@ func main() {
 	//}
 
 	// parse args
-	deviceID := 0                          //os.Args[1]// device id for the webcam, 0 be default
-	quicServerAddr := "1.116.187.145:4242" //os.Args[2]// the server address, in this case 0.0.0.0:4242
+	deviceID := 0                      //os.Args[1]// device id for the webcam, 0 be default
+	quicServerAddr := "127.0.0.1:4242" //os.Args[2]// the server address, in this case 0.0.0.0:4242
 
 	//open webcam
 	webcam, err = gocv.OpenVideoCapture(deviceID)
@@ -92,7 +92,7 @@ func main() {
 			t = time.Now()
 			size = 0
 		}
-		if image_count == 1000 {
+		if image_count == 1001 {
 			break
 		}
 
@@ -129,10 +129,11 @@ func main() {
 
 		t4 := time.Now()
 		stream.Write(buf2) //sends the frame
+
 		t2 += time.Since(t4)
 		if image_count%20 == 0 {
 			elapsed := time.Since(t)
-			duration := int(elapsed / time.Second)
+			duration := float64(elapsed) / float64(time.Second)
 			log.Println("FPS:", 20/(duration))
 			log.Println("throughput(MB):", float64(size)/(1024.0*1024.0*float64(duration)))
 			log.Println("gocv time :", t1, "transfer time :", t2, "total time:", elapsed)

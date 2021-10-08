@@ -21,9 +21,10 @@ import (
 //The reciever function that recieves the frames from the sender
 //input args - the directory to store the frames. Run the viewer function to show the video
 
-const quicServerAddr = "1.116.187.145:5252"
+const quicServerAddr = "127.0.0.1:5252"
 
 var elapsed time.Duration
+var size int64
 
 func HandleError(err error) {
 	if err != nil {
@@ -40,14 +41,13 @@ func main() {
 	quicConfig := &quic.Config{
 		CreatePaths: true,
 	}
-	f, err := os.OpenFile("client_stream_receiver/clientlog.txtt", os.O_CREATE|os.O_RDWR|os.O_APPEND, 0666)
+	f, err := os.OpenFile("client_stream_receiver/clientlog.txt", os.O_CREATE|os.O_RDWR|os.O_APPEND, 0666)
 	if err != nil {
 		panic(err)
 	}
 	defer f.Close()
 	log.SetOutput(f)
 	log.SetFlags(log.Ltime | log.Lshortfile)
-
 	log.Println() //4G + 4G or 4G or 4G + wifi or wifi?
 
 	// initializing mpquic server
@@ -61,11 +61,12 @@ func main() {
 	fmt.Println("stream created: ", stream.StreamID())
 
 	frame_counter := 0
-	t1 := time.Now()
-
+	t := time.Now()
+	var t1, t2 time.Duration = 0, 0
 	for {
-		if frame_counter%100 == 0 {
-			t1 = time.Now()
+		if frame_counter%20 == 0 {
+			t = time.Now()
+			size = 0
 		}
 		siz := make([]byte, 8) // size is needed to make use of ReadFull(). ReadAll() needs EOF to stop accepting while ReadFull just needs the fixed size.
 
@@ -77,10 +78,12 @@ func main() {
 			defer stream.Close()
 			return
 		}
-
+		t4 := time.Now()
 		buff := make([]byte, data)
+		size += int64(data)
 		len2, err := io.ReadFull(stream, buff) // recieve image
 
+		t2 += time.Since(t4)
 		HandleError(err)
 
 		//if empty buffer
@@ -95,7 +98,9 @@ func main() {
 		clientTime := binary.LittleEndian.Uint64(timeStamp)
 		//fmt.Println(clientTime)
 		//fmt.Println(" the time :",uint64(time.Now().UnixMilli())-clientTime)//the time consumed
+
 		img, err := gocv.IMDecode(imgbuff, 1) //IMReadFlag 1 ensure that image is converted to 3 channel RGB
+
 		HandleError(err)
 		// if decoding fails
 
@@ -103,27 +108,32 @@ func main() {
 			defer stream.Close()
 			return
 		}
+
 		random.Seed(time.Now().UnixNano())
 		num := random.Intn(10)
 		if num == 5 {
-			log.Println("time consumed :", uint64(time.Now().UnixMilli())-clientTime)
+			clientTime++
+			//log.Println("time consumed :", uint64(time.Now().UnixMilli())-clientTime)
 		}
 
-		//everything good !!
-		//save image and call viewer.py which shows the stream
+		t3 := time.Now()
 
-		/*file, err := os.Create(videoDir + "/img" + strconv.Itoa(frame_counter) + ".jpg")
-		HandleError(err)
-		fmt.Println(frame_counter)
-
-		gocv.IMWrite(videoDir+"/img"+strconv.Itoa(frame_counter)+".jpg", img)*/
 		window.IMShow(img)
+
+		t1 += time.Since(t3)
+
 		if window.WaitKey(1) == 27 {
 			break
 		}
+
 		frame_counter += 1
-		if frame_counter%100 == 0 {
-			elapsed = time.Since(t1)
+		if frame_counter%20 == 0 {
+			elapsed = time.Since(t)
+			duration := float64(elapsed) / float64(time.Second)
+			log.Println("FPS:", 20/(duration))
+			log.Println("throughput(MB):", float64(size)/(1024.0*1024.0*float64(duration)))
+			log.Println("gocv time :", t1, "transfer time :", t2, "total time:", elapsed)
+			t1, t2 = 0, 0
 			//log.Println("FPS:",100 / (int(elapsed / time.Second)))
 		}
 		/*fmt.Println(videoDir + "/img" + strconv.Itoa(frame_counter) + ".jpg")
@@ -134,6 +144,7 @@ func main() {
 }
 
 func generateTLSConfig() *tls.Config {
+
 	key, err := rsa.GenerateKey(rand.Reader, 1024)
 	if err != nil {
 		panic(err)

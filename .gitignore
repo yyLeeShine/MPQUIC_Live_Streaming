@@ -2,3 +2,4 @@
 /client_stream_receiver/clientlog.txt
 /client_stream_sender/clientlog.txt
 /server/
+/test.go

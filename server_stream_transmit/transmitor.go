@@ -32,7 +32,21 @@ func main() {
 	quicConfig := &quic.Config{
 		CreatePaths: true,
 	}
+	fmt.Println("Attaching to: ", quicServerAddr2)
+	listener2, err := quic.ListenAddr(quicServerAddr2, generateTLSConfig(), quicConfig) //因为服务器才需要公钥和私钥
+	HandleError(err)
 
+	sess2, err := listener2.Accept() //accepting a session from sender
+	HandleError(err)
+
+	fmt.Println("session created: ", sess2.RemoteAddr())
+
+	streamSender, err := sess2.OpenStream()
+	HandleError(err)
+
+	defer streamSender.Close()
+
+	fmt.Println("streamReceive created: ", streamSender.StreamID())
 	// initializing mpquic server
 	fmt.Println("Attaching to: ", quicServerAddr)
 	listener, err := quic.ListenAddr(quicServerAddr, generateTLSConfig(), quicConfig)
@@ -52,22 +66,9 @@ func main() {
 
 	fmt.Println("streamReceive created: ", streamReceive.StreamID())
 
-	fmt.Println("Attaching to: ", quicServerAddr2)
-	listener2, err := quic.ListenAddr(quicServerAddr2, generateTLSConfig(), quicConfig)
-	HandleError(err)
-
-	sess2, err := listener2.Accept() //accepting connection from sender
-	HandleError(err)
-
-	fmt.Println("session created: ", sess.RemoteAddr())
-
-	streamSender, err := sess2.OpenStream()
-	HandleError(err)
-
-	defer streamReceive.Close()
-
-	fmt.Println("streamReceive created: ", streamSender.StreamID())
-
+	//var sliceChan chan []byte = make(chan []byte)
+	//var sliceChan2 chan []byte = make(chan []byte)
+	//go send(streamSender,sliceChan,sliceChan2)
 	for {
 		siz := make([]byte, 8) // size is needed to make use of ReadFull(). ReadAll() needs EOF to stop accepting while ReadFull just needs the fixed size.
 
@@ -75,7 +76,8 @@ func main() {
 
 		data := binary.LittleEndian.Uint64(siz) //if the first few bytes contain the length; else use BigEndian or reverse the byte[] and use LittleEndian
 		HandleError(err)
-		streamSender.Write(siz)
+		//streamSender.Write(siz)
+		//sliceChan<-siz
 		if data == 0 {
 			defer streamReceive.Close()
 			return
@@ -83,7 +85,7 @@ func main() {
 
 		buff := make([]byte, data)
 		len2, err := io.ReadFull(streamReceive, buff) // recieve image
-
+		//sliceChan2<-buff
 		HandleError(err)
 
 		//if empty buffer
@@ -91,14 +93,22 @@ func main() {
 			defer streamReceive.Close()
 			return
 		}
-		//		streamSender.Write(siz)
+		streamSender.Write(siz)
 		//		time.Sleep(time.Second/100)
-		streamSender.Write(buff)
+		//streamSender.Write(buff)
 
 	}
 
 }
+func send(stream quic.Stream, sliceChan1 chan []byte, sliceChan2 chan []byte) {
+	for {
+		siz := <-sliceChan1
+		(stream).Write(siz)
+		data := <-sliceChan2
+		(stream).Write(data)
 
+	}
+}
 func generateTLSConfig() *tls.Config {
 	key, err := rsa.GenerateKey(rand.Reader, 1024)
 	if err != nil {
