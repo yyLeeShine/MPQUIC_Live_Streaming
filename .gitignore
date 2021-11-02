@@ -3,3 +3,7 @@
 /client_stream_sender/clientlog.txt
 /server/
 /test.go
+/peerToPeer/tcpFileTransfer/fileSample/50MB.bin
+/peerToPeer/tcpFileTransfer/fileSample/50MB.bin
+/peerToPeer/fileTransfer/fileSample/50MB.bin
+/50MB.bin
