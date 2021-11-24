@@ -51,7 +51,7 @@ func main() {
 
 	//fileName := string(data1[:length1])
 	//fmt.Println(fileName)
-	f, err := os.Create("50MB.bin")
+	f, err := os.Create("10MB.bin")
 
 	if err != nil {
 		fmt.Println(err)
@@ -60,20 +60,22 @@ func main() {
 	HandleError(err)
 
 	defer f.Close()
-	begin := time.Now()
+
 	totallength := 0
+	ticker := time.NewTimer(time.Second * 1)
 	for {
 		data := make([]byte, 2048) // size is needed to make use of ReadFull(). ReadAll() needs EOF to stop accepting while ReadFull just needs the fixed size.
 
 		length, err := streamReceive.Read(data)
 		totallength += length
-		if totallength >= 10*1048576 {
-			totallength = 0
-			duration := time.Since(begin)
-			long := float64(duration) / float64(time.Second)
-			begin = time.Now()
 
-			fmt.Println(float64(10) / long)
+		select {
+		case <-ticker.C:
+			fmt.Println(float64(totallength) / float64(1024*128))
+			ticker.Reset(time.Second * 1)
+			totallength = 0
+		default:
+
 		}
 		HandleError(err)
 

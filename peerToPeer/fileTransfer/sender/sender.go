@@ -17,7 +17,7 @@ func handleError(err error) {
 
 func main() {
 
-	quicServerAddr := "127.0.0.1:4242"
+	quicServerAddr := "120.26.8.97:4242"
 
 	//mpquic server
 	quicConfig := &quic.Config{
